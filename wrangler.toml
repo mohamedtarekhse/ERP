@@ -1,5 +1,8 @@
 name = "amici-erp"
-pages_build_output_dir = "dist"
+compatibility_date = "2026-06-16"
+
+[assets]
+directory = "./dist"
 
 [vars]
 # Public variables (Safe for frontend)
@@ -7,6 +10,3 @@ VITE_SUPABASE_URL = "your-supabase-url"
 
 # Secret variables should be set via Cloudflare Dashboard or Wrangler secret:
 # VITE_SUPABASE_ANON_KEY (Public anon key)
-
-# Routing for BFF layer if needed
-# binding = "API"
