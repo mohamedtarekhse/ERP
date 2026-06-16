@@ -1,0 +1,47 @@
+:root {
+  --sap-blue:        #0070f2;
+  --sap-blue-dark:   #0040b0;
+  --sap-blue-light:  #e8f3ff;
+  --sap-shell:       #354a5e;
+  --sap-shell-text:  #ffffff;
+  --sap-bg:          #f5f6f7;
+  --sap-white:       #ffffff;
+  --sap-border:      #d9dbdd;
+  --sap-text:        #32363a;
+  --sap-text-muted:  #6a6d70;
+  --sap-green:       #188918;
+  --sap-orange:      #e9730c;
+  --sap-red:         #bb0000;
+  --sap-purple:      #6b3fa0;
+  --sap-teal:        #0f6c6c;
+  
+  --font: 'Segoe UI', Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--sap-bg);
+  color: var(--sap-text);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--sap-border);
+  border-radius: 3px;
+}
