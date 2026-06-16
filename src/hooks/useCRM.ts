@@ -33,6 +33,80 @@ export interface CRMActivity {
   content: string;
 }
 
+export interface CRMLead {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  status: string;
+  source: string;
+}
+
+export interface CRMQuotation {
+  id: string;
+  name: string;
+  organization_id: string;
+  lead_id: string;
+  transaction_date: string;
+  status: string;
+  grand_total: number;
+}
+
+export interface CRMSalesOrder {
+  id: string;
+  name: string;
+  organization_id: string;
+  transaction_date: string;
+  delivery_date: string;
+  workflow_state: string;
+  grand_total: number;
+}
+
+export const useCRMLeads = () => {
+  return useQuery({
+    queryKey: ['crm_leads'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('leads')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data as CRMLead[];
+    },
+  });
+};
+
+export const useCRMQuotations = () => {
+  return useQuery({
+    queryKey: ['crm_quotations'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('quotations')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data as CRMQuotation[];
+    },
+  });
+};
+
+export const useCRMSalesOrders = () => {
+  return useQuery({
+    queryKey: ['crm_sales_orders'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('sales_orders')
+        .select(`
+          *,
+          crm_organizations:organization_id (organization_name)
+        `)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data as CRMSalesOrder[];
+    },
+  });
+};
+
 export const useCRMOrganizations = () => {
   return useQuery({
     queryKey: ['crm_organizations'],

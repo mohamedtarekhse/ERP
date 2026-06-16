@@ -17,6 +17,7 @@ import { HREmployeeDetail } from '../modules/HREmployeeDetail';
 import { CRMAccountDetail } from '../modules/CRMAccountDetail';
 import { AssetCertificateDetail } from '../modules/AssetCertificateDetail';
 import { SupplyPODetail } from '../modules/SupplyPODetail';
+import { PurchaseReceiptDetail } from '../modules/PurchaseReceiptDetail';
 import { useAuth } from '../../context/AuthContext';
 import { useNotifications, useMarkNotificationRead } from '../../hooks/useNotifications';
 
@@ -30,7 +31,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const location = useLocation();
-  const { objectPageOpen, closeObjectPage } = useGlobalStore();
+  const { objectPageOpen, closeObjectPage, activeObjectType } = useGlobalStore();
   const { user, signOut, role } = useAuth();
   const { data: notifications } = useNotifications(user?.id);
   const markRead = useMarkNotificationRead();
@@ -50,12 +51,17 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const renderObjectPage = () => {
     if (!objectPageOpen) return null;
 
-    if (location.pathname.startsWith('/hr')) return <HREmployeeDetail />;
-    if (location.pathname.startsWith('/crm')) return <CRMAccountDetail />;
-    if (location.pathname.startsWith('/assets')) return <AssetCertificateDetail />;
-    if (location.pathname.startsWith('/supply-chain')) return <SupplyPODetail />;
-    
-    return null;
+    switch (activeObjectType) {
+      case 'Employee': return <HREmployeeDetail />;
+      case 'Account': return <CRMAccountDetail />;
+      case 'Lead': return <div className="p-4">Lead Detail Component (To be implemented)</div>;
+      case 'Quotation': return <div className="p-4">Quotation Detail Component (To be implemented)</div>;
+      case 'SalesOrder': return <div className="p-4">Sales Order Detail Component (To be implemented)</div>;
+      case 'Certificate': return <AssetCertificateDetail />;
+      case 'PO': return <SupplyPODetail />;
+      case 'PurchaseReceipt': return <PurchaseReceiptDetail />;
+      default: return null;
+    }
   };
 
   return (

@@ -93,7 +93,7 @@ export const AssetModule: React.FC = () => {
       <div className="module-content">
         <div className="content-header">
           <h2>Equipment Certificates ({certificates?.length || 0})</h2>
-          <button className="btn-primary" onClick={() => openObjectPage('New Certificate')}>
+          <button className="btn-primary" onClick={() => openObjectPage('Certificate', 'New Certificate')}>
             <FileStack size={16} />
             <span>{t('assets.new_cert') || 'New Certificate'}</span>
           </button>
@@ -103,7 +103,7 @@ export const AssetModule: React.FC = () => {
           title="Certificates"
           columns={columns} 
           data={certificates || []} 
-          onRowClick={(row) => openObjectPage(row.id)}
+          onRowClick={(row) => openObjectPage('Certificate', row.id)}
         />
       </div>
     </div>

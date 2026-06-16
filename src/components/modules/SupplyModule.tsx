@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { usePurchaseOrders, useSCKPIs, useInventory } from '../../hooks/useSupplyChain';
+import { usePurchaseOrders, useSCKPIs, useInventory, useMaterialRequests, usePurchaseReceipts } from '../../hooks/useSupplyChain';
 import { DataTable } from '../DataTable';
 import { useGlobalStore } from '../../store/globalStore';
-import { ShoppingBag, Truck, Package, Factory } from 'lucide-react';
+import { ShoppingBag, Truck, Package, Factory, ClipboardList, FileCheck } from 'lucide-react';
 
 const KPICard = ({ title, value, icon, color }: { title: string, value: string | number, icon: React.ReactNode, color: string }) => (
   <div className="kpi-card">
@@ -20,9 +20,28 @@ const KPICard = ({ title, value, icon, color }: { title: string, value: string |
 export const SupplyModule: React.FC = () => {
   const { t } = useTranslation();
   const { openObjectPage } = useGlobalStore();
+  const [activeTab, setActiveTab] = useState<'pos' | 'reqs' | 'receipts' | 'inventory'>('pos');
+  
   const { data: purchaseOrders, isLoading: posLoading } = usePurchaseOrders();
+  const { data: materialRequests, isLoading: reqsLoading } = useMaterialRequests();
+  const { data: receipts, isLoading: receiptsLoading } = usePurchaseReceipts();
   const { data: inventory, isLoading: inventoryLoading } = useInventory();
   const { data: kpis, isLoading: kpisLoading } = useSCKPIs();
+
+  const reqColumns = [
+    { key: 'name', label: 'ID' },
+    { key: 'transaction_date', label: 'Date' },
+    { key: 'type', label: 'Type' },
+    { 
+      key: 'status', 
+      label: 'Status',
+      render: (row: any) => (
+        <span className={`status-pill status-${row.status?.toLowerCase()}`}>
+          {row.status}
+        </span>
+      )
+    }
+  ];
 
   const poColumns = [
     { key: 'name', label: t('sc.po_name') || 'PO Number' },
@@ -45,6 +64,30 @@ export const SupplyModule: React.FC = () => {
       key: 'grand_total', 
       label: t('sc.total') || 'Total',
       render: (row: any) => new Intl.NumberFormat('en-US', { style: 'currency', currency: row.currency || 'USD' }).format(row.grand_total || 0)
+    }
+  ];
+
+  const receiptColumns = [
+    { key: 'name', label: 'ID' },
+    { 
+      key: 'supplier', 
+      label: 'Supplier',
+      render: (row: any) => row.suppliers?.supplier_name || '-'
+    },
+    { key: 'transaction_date', label: 'Date' },
+    { 
+      key: 'status', 
+      label: 'Status',
+      render: (row: any) => (
+        <span className={`status-pill status-${row.status?.toLowerCase()}`}>
+          {row.status}
+        </span>
+      )
+    },
+    { 
+      key: 'grand_total', 
+      label: 'Total',
+      render: (row: any) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(row.grand_total || 0)
     }
   ];
 
@@ -72,7 +115,7 @@ export const SupplyModule: React.FC = () => {
     }
   ];
 
-  if (posLoading || inventoryLoading || kpisLoading) {
+  if (posLoading || inventoryLoading || kpisLoading || reqsLoading || receiptsLoading) {
     return <div className="loading-state">Loading Supply Chain Module...</div>;
   }
 
@@ -106,35 +149,127 @@ export const SupplyModule: React.FC = () => {
         />
       </div>
 
-      {/* Main Content: Two Sections */}
-      <div className="module-grid" style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '24px' }}>
-        <div className="module-content">
-          <div className="content-header">
-            <h2>Recent Purchase Orders</h2>
-            <button className="btn-primary" onClick={() => openObjectPage('New PO')}>
-              <ShoppingBag size={16} />
-              <span>{t('sc.new_po') || 'New PO'}</span>
-            </button>
-          </div>
-          <DataTable 
-            title="Purchase Orders"
-            columns={poColumns} 
-            data={purchaseOrders || []} 
-            onRowClick={(row) => openObjectPage(row.id)}
-          />
+      <div className="module-content">
+        <div className="tab-navigation" style={{ display: 'flex', gap: '24px', borderBottom: '1px solid var(--sap-border)', marginBottom: '24px' }}>
+          <button 
+            className={`tab-btn ${activeTab === 'pos' ? 'active' : ''}`} 
+            onClick={() => setActiveTab('pos')}
+            style={activeTab === 'pos' ? styles.activeTab : styles.tab}
+          >
+            Purchase Orders
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === 'reqs' ? 'active' : ''}`} 
+            onClick={() => setActiveTab('reqs')}
+            style={activeTab === 'reqs' ? styles.activeTab : styles.tab}
+          >
+            Material Requests
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === 'receipts' ? 'active' : ''}`} 
+            onClick={() => setActiveTab('receipts')}
+            style={activeTab === 'receipts' ? styles.activeTab : styles.tab}
+          >
+            Purchase Receipts
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === 'inventory' ? 'active' : ''}`} 
+            onClick={() => setActiveTab('inventory')}
+            style={activeTab === 'inventory' ? styles.activeTab : styles.tab}
+          >
+            Stock Inventory
+          </button>
         </div>
 
-        <div className="module-content">
-          <div className="content-header">
-            <h2>{t('sc.inventory')}</h2>
-          </div>
-          <DataTable 
-            title="Inventory"
-            columns={inventoryColumns} 
-            data={inventory || []} 
-          />
-        </div>
+        {activeTab === 'pos' && (
+          <>
+            <div className="content-header">
+              <h2>Recent Purchase Orders</h2>
+              <button className="btn-primary" onClick={() => openObjectPage('PO', 'New PO')}>
+                <ShoppingBag size={16} />
+                <span>{t('sc.new_po') || 'New PO'}</span>
+              </button>
+            </div>
+            <DataTable 
+              title="Purchase Orders"
+              columns={poColumns} 
+              data={purchaseOrders || []} 
+              onRowClick={(row) => openObjectPage('PO', row.id)}
+            />
+          </>
+        )}
+
+        {activeTab === 'reqs' && (
+          <>
+            <div className="content-header">
+              <h2>Material Requests</h2>
+              <button className="btn-primary" onClick={() => openObjectPage('MaterialRequest', 'New Request')}>
+                <ClipboardList size={16} />
+                <span>New Request</span>
+              </button>
+            </div>
+            <DataTable 
+              title="Material Requests"
+              columns={reqColumns} 
+              data={materialRequests || []} 
+              onRowClick={(row) => openObjectPage('MaterialRequest', row.id)}
+            />
+          </>
+        )}
+
+        {activeTab === 'receipts' && (
+          <>
+            <div className="content-header">
+              <h2>Purchase Receipts</h2>
+              <button className="btn-primary" onClick={() => openObjectPage('PurchaseReceipt', 'New Receipt')}>
+                <FileCheck size={16} />
+                <span>New Receipt</span>
+              </button>
+            </div>
+            <DataTable 
+              title="Purchase Receipts"
+              columns={receiptColumns} 
+              data={receipts || []} 
+              onRowClick={(row) => openObjectPage('PurchaseReceipt', row.id)}
+            />
+          </>
+        )}
+
+        {activeTab === 'inventory' && (
+          <>
+            <div className="content-header">
+              <h2>{t('sc.inventory')}</h2>
+            </div>
+            <DataTable 
+              title="Inventory"
+              columns={inventoryColumns} 
+              data={inventory || []} 
+            />
+          </>
+        )}
       </div>
     </div>
   );
+};
+
+const styles = {
+  tab: {
+    padding: '12px 16px',
+    border: 'none',
+    background: 'none',
+    cursor: 'pointer',
+    color: 'var(--sap-text-muted)',
+    fontSize: '14px',
+    fontWeight: 500
+  },
+  activeTab: {
+    padding: '12px 16px',
+    border: 'none',
+    background: 'none',
+    cursor: 'pointer',
+    color: 'var(--sap-blue)',
+    fontSize: '14px',
+    fontWeight: 700,
+    borderBottom: '3px solid var(--sap-blue)'
+  }
 };

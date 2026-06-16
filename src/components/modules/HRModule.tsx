@@ -86,7 +86,7 @@ export const HRModule: React.FC = () => {
       <div className="module-content">
         <div className="content-header">
           <h2>{t('nav.hr')} ({employees?.length || 0})</h2>
-          <button className="btn-primary" onClick={() => openObjectPage('New Employee')}>
+          <button className="btn-primary" onClick={() => openObjectPage('Employee', 'New Employee')}>
             <UserPlus size={16} />
             <span>{t('hr.new_employee') || 'New Employee'}</span>
           </button>
@@ -96,10 +96,9 @@ export const HRModule: React.FC = () => {
           title="Employees"
           columns={columns} 
           data={employees || []} 
-          onRowClick={(row) => openObjectPage(row.id)}
+          onRowClick={(row) => openObjectPage('Employee', row.id)}
         />
       </div>
     </div>
   );
 };
-

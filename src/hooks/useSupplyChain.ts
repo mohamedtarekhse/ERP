@@ -24,6 +24,71 @@ export interface InventoryBin {
   reorder_level: number;
 }
 
+export interface MaterialRequest {
+  id: string;
+  name: string;
+  transaction_date: string;
+  schedule_date: string;
+  type: string;
+  status: string;
+  requested_by: string;
+}
+
+export interface PurchaseReceipt {
+  id: string;
+  name: string;
+  supplier_id: string;
+  purchase_order_id: string;
+  transaction_date: string;
+  status: string;
+  grand_total: number;
+}
+
+export const useMaterialRequests = () => {
+  return useQuery({
+    queryKey: ['material_requests'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('material_requests')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data as MaterialRequest[];
+    },
+  });
+};
+
+export const usePurchaseReceipts = () => {
+  return useQuery({
+    queryKey: ['purchase_receipts'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('purchase_receipts')
+        .select(`
+          *,
+          suppliers:supplier_id (supplier_name)
+        `)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data as PurchaseReceipt[];
+    },
+  });
+};
+
+export const useSubmitReceipt = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.rpc('submit_purchase_receipt', { p_id: id });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['purchase_receipts'] });
+      queryClient.invalidateQueries({ queryKey: ['inventory'] });
+    },
+  });
+};
+
 export const usePurchaseOrders = () => {
   return useQuery({
     queryKey: ['purchase_orders'],
