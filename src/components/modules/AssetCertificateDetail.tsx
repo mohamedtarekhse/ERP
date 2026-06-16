@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useGlobalStore } from '../../store/globalStore';
 import { useCertificate, useRenewCertificate, useAssets } from '../../hooks/useAssets';
 import { ObjectPage } from '../ObjectPage';
-import { ShieldCheck, Calendar, FileText, User, MapPin, RefreshCw, Download } from 'lucide-react';
+import { FileText, RefreshCw, Download, Clock } from 'lucide-react';
 
 export const AssetCertificateDetail: React.FC = () => {
   const { t } = useTranslation();
