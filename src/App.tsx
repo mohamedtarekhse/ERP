@@ -4,15 +4,15 @@ import { HRModule } from './components/modules/HRModule';
 import { CRMModule } from './components/modules/CRMModule';
 import { AssetModule } from './components/modules/CertModule';
 import { SupplyModule } from './components/modules/SupplyModule';
-import { AuthProvider, useAuth } from './context/AuthContext';
-import { Login } from './pages/Login';
+import { AuthProvider } from './context/AuthContext';
 import './App.css';
 
 const AppContent = () => {
-  const { session, loading } = useAuth();
-
-  if (loading) return <div className="loading-state">Initializing System...</div>;
-  if (!session) return <Login />;
+  // Phase 1: Authentication is bypassed for development and public demo.
+  // The backend uses anonymous RLS policies.
+  // const { session, loading } = useAuth();
+  // if (loading) return <div className="loading-state">Initializing System...</div>;
+  // if (!session) return <Login />;
 
   return (
     <Layout>

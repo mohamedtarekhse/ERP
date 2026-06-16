@@ -4,7 +4,7 @@ import { Search, Filter, Download } from 'lucide-react';
 export interface Column {
   key: string;
   label: string;
-  render?: (value: any, row: any) => React.ReactNode;
+  render?: (row: any) => React.ReactNode;
 }
 
 export interface DataTableProps {
@@ -62,7 +62,7 @@ export const DataTable: React.FC<DataTableProps> = ({ title, columns, data, onRo
               >
                 {columns.map(col => (
                   <td key={col.key} style={styles.td}>
-                    {col.render ? col.render(row[col.key], row) : row[col.key]}
+                    {col.render ? col.render(row) : row[col.key]}
                   </td>
                 ))}
               </tr>
