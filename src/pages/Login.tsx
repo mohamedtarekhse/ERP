@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { LogIn, ShieldAlert } from 'lucide-react';
 
 export const Login: React.FC = () => {
-  const { t } = useTranslation();
+  const { t: _t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);

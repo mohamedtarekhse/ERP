@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { usePurchaseOrders, useSCKPIs, useInventory } from '../../hooks/useSupplyChain';
 import { DataTable } from '../DataTable';
 import { useGlobalStore } from '../../store/globalStore';
-import { ShoppingBag, Truck, Package, Factory, DollarSign } from 'lucide-react';
+import { ShoppingBag, Truck, Package, Factory } from 'lucide-react';
 
 const KPICard = ({ title, value, icon, color }: { title: string, value: string | number, icon: React.ReactNode, color: string }) => (
   <div className="kpi-card">

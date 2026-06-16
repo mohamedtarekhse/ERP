@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useGlobalStore } from '../../store/globalStore';
 import { usePurchaseOrder, useSubmitPO, useApprovePO, useReceivePO } from '../../hooks/useSupplyChain';
 import { ObjectPage } from '../ObjectPage';
-import { ShoppingBag, Truck, Package, Factory, DollarSign, CheckCircle, FileText, User, MapPin, Send, Printer } from 'lucide-react';
+import { Truck, Package, CheckCircle, FileText, Send, Printer } from 'lucide-react';
 
 export const SupplyPODetail: React.FC = () => {
   const { t } = useTranslation();

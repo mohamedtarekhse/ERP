@@ -71,7 +71,7 @@ export const useMarkNotificationRead = () => {
       
       if (error) throw error;
     },
-    onSuccess: (_, id, context: any) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
     },
   });

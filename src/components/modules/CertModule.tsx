@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useCertificates, useAssetKPIs } from '../../hooks/useAssets';
 import { DataTable } from '../DataTable';
 import { useGlobalStore } from '../../store/globalStore';
-import { ShieldCheck, CheckCircle2, Clock, AlertCircle, FileStack } from 'lucide-react';
+import { ShieldCheck, Clock, AlertCircle, FileStack } from 'lucide-react';
 
 const KPICard = ({ title, value, icon, color }: { title: string, value: string | number, icon: React.ReactNode, color: string }) => (
   <div className="kpi-card">

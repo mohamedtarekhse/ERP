@@ -4,7 +4,7 @@ import { useGlobalStore } from '../../store/globalStore';
 import { useCRMOrganization, useCreateOrganization } from '../../hooks/useCRM';
 import { useEmployees } from '../../hooks/useHR';
 import { ObjectPage } from '../ObjectPage';
-import { Building2, Mail, Phone, Globe, Calendar, DollarSign, Target, ListChecks } from 'lucide-react';
+import { Building2, Target, ListChecks } from 'lucide-react';
 
 export const CRMAccountDetail: React.FC = () => {
   const { t } = useTranslation();

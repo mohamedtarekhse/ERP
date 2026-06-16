@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useEmployees, useHRKPIs } from '../../hooks/useHR';
 import { DataTable } from '../DataTable';
 import { useGlobalStore } from '../../store/globalStore';
-import { Users, UserPlus, Clock, CheckCircle, AlertTriangle } from 'lucide-react';
+import { Users, UserPlus, Clock, CheckCircle } from 'lucide-react';
 
 const KPICard = ({ title, value, icon, color }: { title: string, value: string | number, icon: React.ReactNode, color: string }) => (
   <div className="kpi-card">
@@ -102,3 +102,4 @@ export const HRModule: React.FC = () => {
     </div>
   );
 };
+

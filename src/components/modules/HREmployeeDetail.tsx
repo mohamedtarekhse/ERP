@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useGlobalStore } from '../../store/globalStore';
 import { useEmployee, useCreateEmployee, useDepartments, useDesignations } from '../../hooks/useHR';
 import { ObjectPage } from '../ObjectPage';
-import { Mail, Phone, MapPin, Calendar, Globe, Award, Briefcase, FileText } from 'lucide-react';
+import { Calendar, Briefcase, FileText } from 'lucide-react';
 
 export const HREmployeeDetail: React.FC = () => {
   const { t } = useTranslation();
