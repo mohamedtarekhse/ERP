@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useEmployees, useHRKPIs } from '../../hooks/useHR';
 import { DataTable } from '../DataTable';
 import { useGlobalStore } from '../../store/globalStore';
-import { Users, UserPlus, Clock, CheckCircle } from 'lucide-react';
+import { UserPlus } from 'lucide-react';
 
 const KPICard = ({ title, value }: { title: string, value: string | number }) => (
   <div className="kpi-card">

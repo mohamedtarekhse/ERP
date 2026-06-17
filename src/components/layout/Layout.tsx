@@ -53,7 +53,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   // Dynamic Breadcrumbs logic for Frappe v15 style
   const pathSegments = location.pathname.split('/').filter(p => p);
-  const breadcrumbs = [
+  
+  interface BreadcrumbItem {
+    label: string;
+    path: string;
+    icon?: React.ReactNode;
+  }
+
+  const breadcrumbs: BreadcrumbItem[] = [
     { label: 'Home', path: '/', icon: <Home size={14} /> },
     ...pathSegments.map((segment, index) => ({
       label: t(`nav.${segment.replace('-', '_')}`) || segment.charAt(0).toUpperCase() + segment.slice(1),
