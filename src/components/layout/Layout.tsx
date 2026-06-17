@@ -9,9 +9,11 @@ import {
   Users,
   Briefcase,
   ShieldCheck,
-  ShoppingBag
+  ShoppingBag,
+  ChevronRight,
+  Home
 } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useGlobalStore } from '../../store/globalStore';
 import { HREmployeeDetail } from '../modules/HREmployeeDetail';
 import { CRMAccountDetail } from '../modules/CRMAccountDetail';
@@ -31,6 +33,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const { objectPageOpen, closeObjectPage, activeObjectType } = useGlobalStore();
   const { user, signOut, role } = useAuth();
   const { data: notifications } = useNotifications(user?.id);
@@ -42,10 +45,20 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   };
 
   const navItems = [
-    { path: '/hr', label: t('nav.hr'), icon: <Users size={20} /> },
-    { path: '/crm', label: t('nav.crm'), icon: <Briefcase size={20} /> },
-    { path: '/assets', label: t('nav.assets'), icon: <ShieldCheck size={20} /> },
-    { path: '/supply-chain', label: t('nav.supply_chain'), icon: <ShoppingBag size={20} /> },
+    { path: '/hr', label: t('nav.hr'), icon: <Users size={18} /> },
+    { path: '/crm', label: t('nav.crm'), icon: <Briefcase size={18} /> },
+    { path: '/assets', label: t('nav.assets'), icon: <ShieldCheck size={18} /> },
+    { path: '/supply-chain', label: t('nav.supply_chain'), icon: <ShoppingBag size={18} /> },
+  ];
+
+  // Dynamic Breadcrumbs logic for Frappe v15 style
+  const pathSegments = location.pathname.split('/').filter(p => p);
+  const breadcrumbs = [
+    { label: 'Home', path: '/', icon: <Home size={14} /> },
+    ...pathSegments.map((segment, index) => ({
+      label: t(`nav.${segment.replace('-', '_')}`) || segment.charAt(0).toUpperCase() + segment.slice(1),
+      path: '/' + pathSegments.slice(0, index + 1).join('/')
+    }))
   ];
 
   const renderObjectPage = () => {
@@ -54,9 +67,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     switch (activeObjectType) {
       case 'Employee': return <HREmployeeDetail />;
       case 'Account': return <CRMAccountDetail />;
-      case 'Lead': return <div className="p-4">Lead Detail Component (To be implemented)</div>;
-      case 'Quotation': return <div className="p-4">Quotation Detail Component (To be implemented)</div>;
-      case 'SalesOrder': return <div className="p-4">Sales Order Detail Component (To be implemented)</div>;
+      case 'Lead': return <div className="p-4">Lead Detail (To be implemented)</div>;
+      case 'Quotation': return <div className="p-4">Quotation Detail (To be implemented)</div>;
+      case 'SalesOrder': return <div className="p-4">Sales Order Detail (To be implemented)</div>;
       case 'Certificate': return <AssetCertificateDetail />;
       case 'PO': return <SupplyPODetail />;
       case 'PurchaseReceipt': return <PurchaseReceiptDetail />;
@@ -66,34 +79,57 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <div className="app-container">
-      {/* Shell Bar */}
-      <header className="shell-bar">
-        <div className="shell-left">
-          <button className="shell-btn" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+      {/* Navbar (Frappe Shell) */}
+      <nav className="navbar">
+        <div className="navbar-left">
+          <button className="icon-btn" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
             <Menu size={20} />
           </button>
-          <div className="shell-logo">
-            <h1>{t('app.title')}</h1>
+          
+          <div className="breadcrumb-container">
+            {breadcrumbs.map((bc, i) => (
+              <React.Fragment key={bc.path}>
+                <div 
+                  className="breadcrumb-item" 
+                  onClick={() => navigate(bc.path)}
+                >
+                  {bc.icon && <span style={{ marginRight: '6px', display: 'flex' }}>{bc.icon}</span>}
+                  {bc.label}
+                </div>
+                {i < breadcrumbs.length - 1 && <ChevronRight size={12} className="breadcrumb-separator" />}
+              </React.Fragment>
+            ))}
           </div>
         </div>
 
-        <div className="shell-center">
-          <div className="search-wrap">
-            <Search size={16} className="search-icon" />
-            <input type="text" placeholder={t('common.search')} className="search-input" />
+        <div className="navbar-center">
+          <div className="search-container">
+            <Search size={16} className="search-icon-fixed" />
+            <input 
+              type="text" 
+              placeholder={t('common.search') + " (Cmd+K)"} 
+              className="search-input" 
+            />
           </div>
         </div>
 
-        <div className="shell-right">
-          <button className="shell-btn" onClick={toggleLanguage} title={t('common.language')}>
-            <Globe size={20} />
-            <span className="lang-text">{i18n.language.toUpperCase()}</span>
+        <div className="navbar-right">
+          <button className="icon-btn" onClick={toggleLanguage} title={t('common.language')}>
+            <Globe size={18} />
+            <span style={{ marginLeft: '4px', fontSize: '12px', fontWeight: 600 }}>
+              {i18n.language.toUpperCase()}
+            </span>
           </button>
           
           <div style={{ position: 'relative' }}>
-            <button className="shell-btn" onClick={() => setIsNotifOpen(!isNotifOpen)} title={t('common.notifications')}>
-              <Bell size={20} />
-              {notifications && notifications.length > 0 && <span className="badge">{notifications.length}</span>}
+            <button className="icon-btn" onClick={() => setIsNotifOpen(!isNotifOpen)} title={t('common.notifications')}>
+              <Bell size={18} />
+              {notifications && notifications.length > 0 && (
+                <span style={{
+                  position: 'absolute', top: '2px', right: '2px', width: '8px', height: '8px',
+                  backgroundColor: 'var(--frappe-red)', borderRadius: '50%', border: '2px solid white'
+                }}></span>
+              )}
             </button>
             {isNotifOpen && (
               <div className="notif-dropdown">
@@ -112,8 +148,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
 
           <div style={{ position: 'relative' }}>
-            <div className="user-profile" onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}>
-              <div className="avatar">{user?.email?.[0].toUpperCase()}</div>
+            <div className="user-profile" style={{ cursor: 'pointer' }} onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}>
+              <div className="user-avatar">{user?.email?.[0].toUpperCase() || 'U'}</div>
             </div>
             {isUserMenuOpen && (
               <div className="user-dropdown">
@@ -122,35 +158,35 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   <div className="user-role">{role || 'Employee'}</div>
                 </div>
                 <button className="dropdown-item" onClick={() => signOut()}>
-                  <LogOut size={16} />
+                  <LogOut size={14} />
                   <span>{t('common.logout')}</span>
                 </button>
               </div>
             )}
           </div>
         </div>
-      </header>
+      </nav>
 
       <div className="main-layout">
         {/* Sidebar */}
         <aside className={`sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
-          <nav className="side-nav">
+          <div className="nav-group">
             {navItems.map((item) => (
               <Link 
                 key={item.path} 
                 to={item.path} 
-                className={`nav-item ${location.pathname.startsWith(item.path) ? 'active' : ''}`}
+                className={`nav-link ${location.pathname.startsWith(item.path) ? 'active' : ''}`}
                 onClick={() => objectPageOpen && closeObjectPage()}
               >
                 {item.icon}
                 <span className="nav-label">{item.label}</span>
               </Link>
             ))}
-          </nav>
+          </div>
         </aside>
 
         {/* Content Area */}
-        <main className="content-area" style={{ position: 'relative' }}>
+        <main className="content-area">
           {children}
           {renderObjectPage()}
         </main>

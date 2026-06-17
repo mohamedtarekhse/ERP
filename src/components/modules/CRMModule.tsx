@@ -3,17 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { useCRMOrganizations, useCRMKPIs, useCRMLeads, useCRMQuotations, useCRMSalesOrders } from '../../hooks/useCRM';
 import { DataTable } from '../DataTable';
 import { useGlobalStore } from '../../store/globalStore';
-import { Building2, Landmark, Target, Award, Clock, UserPlus, FileText, ShoppingCart } from 'lucide-react';
+import { UserPlus, Target, FileText, ShoppingCart } from 'lucide-react';
 
-const KPICard = ({ title, value, icon, color }: { title: string, value: string | number, icon: React.ReactNode, color: string }) => (
+const KPICard = ({ title, value }: { title: string, value: string | number }) => (
   <div className="kpi-card">
-    <div className="kpi-icon" style={{ backgroundColor: color }}>
-      {icon}
-    </div>
-    <div className="kpi-content">
-      <span className="kpi-title">{title}</span>
-      <span className="kpi-value">{value}</span>
-    </div>
+    <span className="kpi-label">{title}</span>
+    <span className="kpi-value">{value}</span>
   </div>
 );
 
@@ -36,7 +31,7 @@ export const CRMModule: React.FC = () => {
       key: 'status', 
       label: 'Status',
       render: (row: any) => (
-        <span className={`status-pill status-${row.status?.toLowerCase()}`}>
+        <span className={`pill pill-${row.status === 'Open' ? 'blue' : 'green'}`}>
           {row.status}
         </span>
       )
@@ -50,7 +45,7 @@ export const CRMModule: React.FC = () => {
       key: 'rating', 
       label: t('crm.rating') || 'Rating',
       render: (row: any) => (
-        <span className={`rating-indicator rating-${row.rating?.toLowerCase()}`}>
+        <span className="rating-pill">
           {row.rating === 'Hot' ? '🔴' : row.rating === 'Warm' ? '🟡' : '🔵'} {row.rating}
         </span>
       )
@@ -74,9 +69,7 @@ export const CRMModule: React.FC = () => {
       key: 'status', 
       label: 'Status',
       render: (row: any) => (
-        <span className={`status-pill status-${row.status?.toLowerCase()}`}>
-          {row.status}
-        </span>
+        <span className="pill pill-blue">{row.status}</span>
       )
     },
     { 
@@ -98,9 +91,7 @@ export const CRMModule: React.FC = () => {
       key: 'workflow_state', 
       label: 'Status',
       render: (row: any) => (
-        <span className={`status-pill status-${row.workflow_state?.toLowerCase().replace(' ', '-')}`}>
-          {row.workflow_state}
-        </span>
+        <span className="pill pill-green">{row.workflow_state}</span>
       )
     },
     { 
@@ -111,121 +102,106 @@ export const CRMModule: React.FC = () => {
   ];
 
   if (orgsLoading || kpisLoading || leadsLoading || qtsLoading || ordersLoading) {
-    return <div className="loading-state">Loading CRM & Sales Module...</div>;
+    return <div className="loading-state">Loading CRM Workspace...</div>;
   }
 
   return (
-    <div className="module-container">
-      {/* KPI Row */}
-      <div className="kpi-row">
-        <KPICard 
-          title="Total Accounts" 
-          value={kpis?.total_organizations || 0} 
-          icon={<Building2 size={24} />} 
-          color="var(--sap-blue)" 
-        />
-        <KPICard 
-          title="Active Contract Value" 
-          value={new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(kpis?.active_contract_value || 0)} 
-          icon={<Landmark size={24} />} 
-          color="var(--sap-green)" 
-        />
-        <KPICard 
-          title="Win Rate" 
-          value={`${kpis?.win_rate || 0}%`} 
-          icon={<Award size={24} />} 
-          color="var(--sap-purple)" 
-        />
-        <KPICard 
-          title="Overdue Tasks" 
-          value={kpis?.overdue_activities || 0} 
-          icon={<Clock size={24} />} 
-          color="var(--sap-red)" 
-        />
+    <div className="workspace-container">
+      <header className="workspace-header">
+        <h1 className="workspace-title">{t('nav.crm')}</h1>
+      </header>
+
+      <div className="kpi-grid">
+        <KPICard title="Total Accounts" value={kpis?.total_organizations || 0} />
+        <KPICard title="Contract Value" value={new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(kpis?.active_contract_value || 0)} />
+        <KPICard title="Win Rate" value={`${kpis?.win_rate || 0}%`} />
+        <KPICard title="Overdue Tasks" value={kpis?.overdue_activities || 0} />
       </div>
 
-      <div className="module-content">
-        <div className="tab-navigation" style={{ display: 'flex', gap: '24px', borderBottom: '1px solid var(--sap-border)', marginBottom: '24px' }}>
-          <button onClick={() => setActiveTab('leads')} style={activeTab === 'leads' ? styles.activeTab : styles.tab}>Leads</button>
-          <button onClick={() => setActiveTab('accounts')} style={activeTab === 'accounts' ? styles.activeTab : styles.tab}>Accounts</button>
-          <button onClick={() => setActiveTab('quotations')} style={activeTab === 'quotations' ? styles.activeTab : styles.tab}>Quotations</button>
-          <button onClick={() => setActiveTab('orders')} style={activeTab === 'orders' ? styles.activeTab : styles.tab}>Sales Orders</button>
+      <div className="section-card">
+        <div className="section-header" style={{ display: 'flex', gap: '20px', padding: '0 20px' }}>
+          <button onClick={() => setActiveTab('leads')} className={`tab-link ${activeTab === 'leads' ? 'active' : ''}`}>Leads</button>
+          <button onClick={() => setActiveTab('accounts')} className={`tab-link ${activeTab === 'accounts' ? 'active' : ''}`}>Accounts</button>
+          <button onClick={() => setActiveTab('quotations')} className={`tab-link ${activeTab === 'quotations' ? 'active' : ''}`}>Quotations</button>
+          <button onClick={() => setActiveTab('orders')} className={`tab-link ${activeTab === 'orders' ? 'active' : ''}`}>Sales Orders</button>
         </div>
 
-        {activeTab === 'leads' && (
-          <>
-            <div className="content-header">
-              <h2>Recent Leads</h2>
-              <button className="btn-primary" onClick={() => openObjectPage('Lead', 'New Lead')}>
-                <UserPlus size={16} />
-                <span>New Lead</span>
-              </button>
-            </div>
-            <DataTable title="Leads" columns={leadColumns} data={leads || []} onRowClick={(row) => openObjectPage('Lead', row.id)} />
-          </>
-        )}
+        <div className="section-body" style={{ padding: 0 }}>
+          {activeTab === 'leads' && (
+            <>
+              <div style={{ padding: '12px 20px', borderBottom: '1px solid var(--frappe-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontWeight: 600, fontSize: '13px' }}>Recent Leads</span>
+                <button className="btn-frappe btn-frappe-primary" onClick={() => openObjectPage('Lead', 'New')}>
+                  <UserPlus size={14} style={{ marginRight: '6px' }} />
+                  New Lead
+                </button>
+              </div>
+              <DataTable columns={leadColumns} data={leads || []} onRowClick={(row) => openObjectPage('Lead', row.id)} />
+            </>
+          )}
 
-        {activeTab === 'accounts' && (
-          <>
-            <div className="content-header">
-              <h2>Accounts ({organizations?.length || 0})</h2>
-              <button className="btn-primary" onClick={() => openObjectPage('Account', 'New Account')}>
-                <Target size={16} />
-                <span>{t('crm.new_account') || 'New Account'}</span>
-              </button>
-            </div>
-            <DataTable title="Accounts" columns={orgColumns} data={organizations || []} onRowClick={(row) => openObjectPage('Account', row.id)} />
-          </>
-        )}
+          {activeTab === 'accounts' && (
+            <>
+              <div style={{ padding: '12px 20px', borderBottom: '1px solid var(--frappe-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontWeight: 600, fontSize: '13px' }}>Customer Master</span>
+                <button className="btn-frappe btn-frappe-primary" onClick={() => openObjectPage('Account', 'New')}>
+                  <Target size={14} style={{ marginRight: '6px' }} />
+                  New Account
+                </button>
+              </div>
+              <DataTable columns={orgColumns} data={organizations || []} onRowClick={(row) => openObjectPage('Account', row.id)} />
+            </>
+          )}
 
-        {activeTab === 'quotations' && (
-          <>
-            <div className="content-header">
-              <h2>Quotations</h2>
-              <button className="btn-primary" onClick={() => openObjectPage('Quotation', 'New Quotation')}>
-                <FileText size={16} />
-                <span>New Quotation</span>
-              </button>
-            </div>
-            <DataTable title="Quotations" columns={qtColumns} data={quotations || []} onRowClick={(row) => openObjectPage('Quotation', row.id)} />
-          </>
-        )}
+          {activeTab === 'quotations' && (
+            <>
+              <div style={{ padding: '12px 20px', borderBottom: '1px solid var(--frappe-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontWeight: 600, fontSize: '13px' }}>Draft Quotations</span>
+                <button className="btn-frappe btn-frappe-primary" onClick={() => openObjectPage('Quotation', 'New')}>
+                  <FileText size={14} style={{ marginRight: '6px' }} />
+                  New Quotation
+                </button>
+              </div>
+              <DataTable columns={qtColumns} data={quotations || []} onRowClick={(row) => openObjectPage('Quotation', row.id)} />
+            </>
+          )}
 
-        {activeTab === 'orders' && (
-          <>
-            <div className="content-header">
-              <h2>Sales Orders</h2>
-              <button className="btn-primary" onClick={() => openObjectPage('SalesOrder', 'New Order')}>
-                <ShoppingCart size={16} />
-                <span>New Order</span>
-              </button>
-            </div>
-            <DataTable title="Sales Orders" columns={orderColumns} data={orders || []} onRowClick={(row) => openObjectPage('SalesOrder', row.id)} />
-          </>
-        )}
+          {activeTab === 'orders' && (
+            <>
+              <div style={{ padding: '12px 20px', borderBottom: '1px solid var(--frappe-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontWeight: 600, fontSize: '13px' }}>Sales Orders</span>
+                <button className="btn-frappe btn-frappe-primary" onClick={() => openObjectPage('SalesOrder', 'New')}>
+                  <ShoppingCart size={14} style={{ marginRight: '6px' }} />
+                  New Order
+                </button>
+              </div>
+              <DataTable columns={orderColumns} data={orders || []} onRowClick={(row) => openObjectPage('SalesOrder', row.id)} />
+            </>
+          )}
+        </div>
       </div>
+
+      <style>{`
+        .tab-link {
+          padding: 14px 0;
+          border: none;
+          background: none;
+          cursor: pointer;
+          color: var(--frappe-text-muted);
+          font-size: 13px;
+          font-weight: 500;
+          border-bottom: 2px solid transparent;
+          transition: all 0.2s;
+        }
+        .tab-link.active {
+          color: var(--frappe-blue);
+          border-bottom-color: var(--frappe-blue);
+          font-weight: 600;
+        }
+        .tab-link:hover:not(.active) {
+          color: var(--frappe-text);
+        }
+      `}</style>
     </div>
   );
-};
-
-const styles = {
-  tab: {
-    padding: '12px 16px',
-    border: 'none',
-    background: 'none',
-    cursor: 'pointer',
-    color: 'var(--sap-text-muted)',
-    fontSize: '14px',
-    fontWeight: 500
-  },
-  activeTab: {
-    padding: '12px 16px',
-    border: 'none',
-    background: 'none',
-    cursor: 'pointer',
-    color: 'var(--sap-blue)',
-    fontSize: '14px',
-    fontWeight: 700,
-    borderBottom: '3px solid var(--sap-blue)'
-  }
 };

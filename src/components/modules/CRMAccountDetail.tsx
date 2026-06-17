@@ -94,22 +94,22 @@ export const CRMAccountDetail: React.FC = () => {
   const DealsTab = (
     <div className="tab-container">
       <h3>Active Opportunities</h3>
-      <div className="deal-list">
+      <div className="deal-list" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         {organization?.crm_deals?.map((deal: any) => (
-          <div key={deal.id} className="deal-card">
-            <div className="deal-header">
-              <span className="deal-title">{deal.title}</span>
-              <span className="deal-value">{new Intl.NumberFormat('en-US', { style: 'currency', currency: deal.currency }).format(deal.value)}</span>
+          <div key={deal.id} className="card" style={{ padding: '16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+              <span style={{ fontWeight: 600 }}>{deal.title}</span>
+              <span style={{ color: 'var(--frappe-blue)', fontWeight: 700 }}>{new Intl.NumberFormat('en-US', { style: 'currency', currency: deal.currency }).format(deal.value)}</span>
             </div>
             <div className="pipeline-wrap">
-              <div className="pipeline-label">Stage: {deal.status} ({deal.probability}%)</div>
+              <div style={{ fontSize: '12px', color: 'var(--frappe-text-muted)', marginBottom: '4px' }}>Stage: {deal.status} ({deal.probability}%)</div>
               <div className="progress-bar-wrap">
-                <div className="progress-bar" style={{ width: `${deal.probability}%`, backgroundColor: 'var(--sap-green)' }}></div>
+                <div className="progress-bar" style={{ width: `${deal.probability}%`, backgroundColor: 'var(--frappe-green)' }}></div>
               </div>
             </div>
           </div>
         ))}
-        {!organization?.crm_deals?.length && <p>No active opportunities found.</p>}
+        {!organization?.crm_deals?.length && <p style={{ color: 'var(--frappe-text-muted)', fontSize: '13px' }}>No active opportunities found.</p>}
       </div>
     </div>
   );
@@ -122,11 +122,11 @@ export const CRMAccountDetail: React.FC = () => {
           <div className="timeline-content">
             <div className="timeline-date">{new Date(act.reference_date).toLocaleString()}</div>
             <div className="timeline-title">{act.activity_type}</div>
-            <div className="timeline-desc">{act.content}</div>
+            <div style={{ fontSize: '13px', color: 'var(--frappe-text-muted)' }}>{act.content}</div>
           </div>
         </div>
       ))}
-      {!organization?.crm_activities?.length && <p>No activities logged.</p>}
+      {!organization?.crm_activities?.length && <p style={{ color: 'var(--frappe-text-muted)', fontSize: '13px' }}>No activities logged.</p>}
     </div>
   );
 

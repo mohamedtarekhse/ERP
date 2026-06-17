@@ -89,26 +89,26 @@ export const AssetCertificateDetail: React.FC = () => {
   const ExpiryTab = (
     <div className="tab-container">
       <h3>Compliance Timeline</h3>
-      <div className="compliance-viz">
-        <div className="expiry-meter">
-          <span className="days-left">{certificate?.days_remaining} Days Remaining</span>
-          <div className="progress-bar-wrap large">
+      <div style={{ padding: '24px', backgroundColor: '#f8fafc', border: '1px solid var(--frappe-border)', borderRadius: '8px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <span style={{ fontSize: '18px', fontWeight: 700 }}>{certificate?.days_remaining} Days Remaining</span>
+          <div className="progress-bar-wrap" style={{ height: '12px', borderRadius: '6px' }}>
             <div 
               className="progress-bar" 
               style={{ 
                 width: `${Math.max(0, Math.min(100, (certificate?.days_remaining / 365) * 100))}%`,
-                backgroundColor: certificate?.days_remaining < 0 ? 'var(--sap-red)' : certificate?.days_remaining <= 30 ? 'var(--sap-orange)' : 'var(--sap-green)'
+                backgroundColor: certificate?.days_remaining < 0 ? 'var(--frappe-red)' : certificate?.days_remaining <= 30 ? 'var(--frappe-orange)' : 'var(--frappe-green)'
               }}
             ></div>
           </div>
         </div>
         
-        <div className="action-row" style={{ marginTop: '24px', display: 'flex', gap: '12px' }}>
-          <button className="btn-primary" onClick={handleRenew}>
-            <RefreshCw size={16} /> Renew for 1 Year
+        <div style={{ marginTop: '24px', display: 'flex', gap: '12px' }}>
+          <button className="btn-frappe btn-frappe-primary" onClick={handleRenew}>
+            <RefreshCw size={14} style={{ marginRight: '6px' }} /> Renew for 1 Year
           </button>
-          <button className="btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', borderRadius: '4px', border: '1px solid var(--sap-border)', background: 'white', cursor: 'pointer' }}>
-            <Download size={16} /> View PDF Attachment
+          <button className="btn-frappe btn-frappe-secondary">
+            <Download size={14} style={{ marginRight: '6px' }} /> View PDF Attachment
           </button>
         </div>
       </div>

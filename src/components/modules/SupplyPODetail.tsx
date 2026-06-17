@@ -79,36 +79,38 @@ export const SupplyPODetail: React.FC = () => {
   const ItemsTab = (
     <div className="tab-container">
       <h3>PO Line Items</h3>
-      <table className="po-table" style={{ width: '100%', borderCollapse: 'collapse', marginTop: '12px' }}>
-        <thead>
-          <tr style={{ borderBottom: '2px solid var(--sap-border)', textAlign: 'left' }}>
-            <th style={{ padding: '12px' }}>Item Code</th>
-            <th style={{ padding: '12px' }}>Description</th>
-            <th style={{ padding: '12px' }}>Qty</th>
-            <th style={{ padding: '12px' }}>Rate</th>
-            <th style={{ padding: '12px', textAlign: 'right' }}>Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          {po?.purchase_order_items?.map((item: any) => (
-            <tr key={item.id} style={{ borderBottom: '1px solid var(--sap-border)' }}>
-              <td style={{ padding: '12px' }}>{item.item_code}</td>
-              <td style={{ padding: '12px' }}>{item.item_name}</td>
-              <td style={{ padding: '12px' }}>{item.qty} {item.uom}</td>
-              <td style={{ padding: '12px' }}>{new Intl.NumberFormat('en-US', { style: 'currency', currency: po.currency }).format(item.rate)}</td>
-              <td style={{ padding: '12px', textAlign: 'right', fontWeight: 600 }}>{new Intl.NumberFormat('en-US', { style: 'currency', currency: po.currency }).format(item.amount)}</td>
+      <div className="frappe-table-container">
+        <table className="frappe-table">
+          <thead>
+            <tr>
+              <th>Item Code</th>
+              <th>Description</th>
+              <th>Qty</th>
+              <th>Rate</th>
+              <th style={{ textAlign: 'right' }}>Amount</th>
             </tr>
-          ))}
-        </tbody>
-        <tfoot>
-          <tr>
-            <td colSpan={4} style={{ padding: '12px', textAlign: 'right', fontWeight: 700, fontSize: '16px' }}>Grand Total:</td>
-            <td style={{ padding: '12px', textAlign: 'right', fontWeight: 700, fontSize: '18px', color: 'var(--sap-blue)' }}>
-              {new Intl.NumberFormat('en-US', { style: 'currency', currency: po?.currency || 'USD' }).format(po?.grand_total || 0)}
-            </td>
-          </tr>
-        </tfoot>
-      </table>
+          </thead>
+          <tbody>
+            {po?.purchase_order_items?.map((item: any) => (
+              <tr key={item.id}>
+                <td>{item.item_code}</td>
+                <td>{item.item_name}</td>
+                <td>{item.qty} {item.uom}</td>
+                <td>{new Intl.NumberFormat('en-US', { style: 'currency', currency: po.currency }).format(item.rate)}</td>
+                <td style={{ textAlign: 'right', fontWeight: 600 }}>{new Intl.NumberFormat('en-US', { style: 'currency', currency: po.currency }).format(item.amount)}</td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colSpan={4} style={{ padding: '12px', textAlign: 'right', fontWeight: 700, fontSize: '14px', borderTop: '2px solid var(--frappe-border)' }}>Grand Total:</td>
+              <td style={{ padding: '12px', textAlign: 'right', fontWeight: 700, fontSize: '16px', color: 'var(--frappe-blue)', borderTop: '2px solid var(--frappe-border)' }}>
+                {new Intl.NumberFormat('en-US', { style: 'currency', currency: po?.currency || 'USD' }).format(po?.grand_total || 0)}
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
     </div>
   );
 
@@ -122,22 +124,22 @@ export const SupplyPODetail: React.FC = () => {
     return (
       <div style={{ display: 'flex', gap: '8px' }}>
         {po?.workflow_state === 'Draft' && (
-          <button className="btn-primary" onClick={() => handleAction('submit')}>
-            <Send size={16} /> Submit for Approval
+          <button className="btn-frappe btn-frappe-primary" onClick={() => handleAction('submit')}>
+            <Send size={14} style={{ marginRight: '6px' }} /> Submit for Approval
           </button>
         )}
         {po?.workflow_state === 'Pending Approval' && (
-          <button className="btn-primary" style={{ backgroundColor: 'var(--sap-green)' }} onClick={() => handleAction('approve')}>
-            <CheckCircle size={16} /> Approve PO
+          <button className="btn-frappe btn-frappe-primary" style={{ backgroundColor: 'var(--frappe-green)' }} onClick={() => handleAction('approve')}>
+            <CheckCircle size={14} style={{ marginRight: '6px' }} /> Approve PO
           </button>
         )}
         {po?.workflow_state === 'Approved' && (
-          <button className="btn-primary" style={{ backgroundColor: 'var(--sap-purple)' }} onClick={() => handleAction('receive')}>
-            <Truck size={16} /> Mark as Received
+          <button className="btn-frappe btn-frappe-primary" onClick={() => handleAction('receive')}>
+            <Truck size={14} style={{ marginRight: '6px' }} /> Mark as Received
           </button>
         )}
-        <button className="btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', borderRadius: '4px', border: '1px solid var(--sap-border)', background: 'white', cursor: 'pointer' }}>
-          <Printer size={16} /> Print
+        <button className="btn-frappe btn-frappe-secondary">
+          <Printer size={14} style={{ marginRight: '6px' }} /> Print
         </button>
       </div>
     );

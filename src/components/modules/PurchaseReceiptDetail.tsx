@@ -74,26 +74,28 @@ export const PurchaseReceiptDetail: React.FC = () => {
   const ItemsTab = (
     <div className="tab-container">
       <h3>Items Received</h3>
-      <table className="po-table" style={{ width: '100%', borderCollapse: 'collapse', marginTop: '12px' }}>
-        <thead>
-          <tr style={{ borderBottom: '2px solid var(--sap-border)', textAlign: 'left' }}>
-            <th style={{ padding: '12px' }}>Item Code</th>
-            <th style={{ padding: '12px' }}>Qty</th>
-            <th style={{ padding: '12px' }}>Rate</th>
-            <th style={{ padding: '12px', textAlign: 'right' }}>Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          {receipt?.purchase_receipt_items?.map((item: any) => (
-            <tr key={item.id} style={{ borderBottom: '1px solid var(--sap-border)' }}>
-              <td style={{ padding: '12px' }}>{item.item_code}</td>
-              <td style={{ padding: '12px' }}>{item.qty}</td>
-              <td style={{ padding: '12px' }}>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(item.rate)}</td>
-              <td style={{ padding: '12px', textAlign: 'right', fontWeight: 600 }}>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(item.amount)}</td>
+      <div className="frappe-table-container">
+        <table className="frappe-table">
+          <thead>
+            <tr>
+              <th>Item Code</th>
+              <th>Qty</th>
+              <th>Rate</th>
+              <th style={{ textAlign: 'right' }}>Amount</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {receipt?.purchase_receipt_items?.map((item: any) => (
+              <tr key={item.id}>
+                <td>{item.item_code}</td>
+                <td>{item.qty}</td>
+                <td>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(item.rate)}</td>
+                <td style={{ textAlign: 'right', fontWeight: 600 }}>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(item.amount)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 
@@ -105,11 +107,13 @@ export const PurchaseReceiptDetail: React.FC = () => {
   const headerActions = (
     <div style={{ display: 'flex', gap: '8px' }}>
       {receipt?.status === 'Draft' && (
-        <button className="btn-primary" onClick={handleSubmit}>
-          <Send size={16} /> Submit & Update Stock
+        <button className="btn-frappe btn-frappe-primary" onClick={handleSubmit}>
+          <Send size={14} style={{ marginRight: '6px' }} /> Submit & Update Stock
         </button>
       )}
-      <button className="btn-secondary"><Printer size={16} /> Print</button>
+      <button className="btn-frappe btn-frappe-secondary">
+        <Printer size={14} style={{ marginRight: '6px' }} /> Print
+      </button>
     </div>
   );
 
