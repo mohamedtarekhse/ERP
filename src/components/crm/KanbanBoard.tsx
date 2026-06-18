@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import type { DropResult } from '@hello-pangea/dnd';
 import { useCRMPipelineStages, useCRMDeals, useUpdateDealStage } from '../../hooks/useCRM';
 import type { CRMDeal } from '../../hooks/useCRM';
 import { DealCard } from './DealCard';
