@@ -20,6 +20,7 @@ import { CRMAccountDetail } from '../modules/CRMAccountDetail';
 import { AssetCertificateDetail } from '../modules/AssetCertificateDetail';
 import { SupplyPODetail } from '../modules/SupplyPODetail';
 import { PurchaseReceiptDetail } from '../modules/PurchaseReceiptDetail';
+import { CRMDealDetail } from '../crm/CRMDealDetail';
 import { useAuth } from '../../context/AuthContext';
 import { useNotifications, useMarkNotificationRead } from '../../hooks/useNotifications';
 
@@ -74,6 +75,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     switch (activeObjectType) {
       case 'Employee': return <HREmployeeDetail />;
       case 'Account': return <CRMAccountDetail />;
+      case 'Deal': return <CRMDealDetail />;
       case 'Lead': return <div className="p-4">Lead Detail (To be implemented)</div>;
       case 'Quotation': return <div className="p-4">Quotation Detail (To be implemented)</div>;
       case 'SalesOrder': return <div className="p-4">Sales Order Detail (To be implemented)</div>;

@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { useCRMOrganizations, useCRMKPIs, useCRMLeads, useCRMQuotations, useCRMSalesOrders } from '../../hooks/useCRM';
 import { DataTable } from '../DataTable';
 import { useGlobalStore } from '../../store/globalStore';
-import { UserPlus, Target, FileText, ShoppingCart } from 'lucide-react';
+import { UserPlus, Target, FileText, ShoppingCart, LayoutDashboard } from 'lucide-react';
+import { KanbanBoard } from '../crm/KanbanBoard';
 
 const KPICard = ({ title, value }: { title: string, value: string | number }) => (
   <div className="kpi-card">
@@ -15,13 +16,17 @@ const KPICard = ({ title, value }: { title: string, value: string | number }) =>
 export const CRMModule: React.FC = () => {
   const { t } = useTranslation();
   const { openObjectPage } = useGlobalStore();
-  const [activeTab, setActiveTab] = useState<'leads' | 'accounts' | 'quotations' | 'orders'>('accounts');
+  const [activeTab, setActiveTab] = useState<'pipeline' | 'leads' | 'accounts' | 'quotations' | 'orders'>('pipeline');
   
   const { data: organizations, isLoading: orgsLoading } = useCRMOrganizations();
-  const { data: leads, isLoading: leadsLoading } = useCRMLeads();
-  const { data: quotations, isLoading: qtsLoading } = useCRMQuotations();
-  const { data: orders, isLoading: ordersLoading } = useCRMSalesOrders();
+  const { data: leadsResult, isLoading: leadsLoading } = useCRMLeads(activeTab === 'leads');
+  const { data: quotationsResult, isLoading: qtsLoading } = useCRMQuotations(activeTab === 'quotations');
+  const { data: ordersResult, isLoading: ordersLoading } = useCRMSalesOrders(activeTab === 'orders');
   const { data: kpis, isLoading: kpisLoading } = useCRMKPIs();
+
+  const leads = leadsResult?.rows;
+  const quotations = quotationsResult?.rows;
+  const orders = ordersResult?.rows;
 
   const leadColumns = [
     { key: 'name', label: 'Name' },
@@ -101,9 +106,14 @@ export const CRMModule: React.FC = () => {
     }
   ];
 
-  if (orgsLoading || kpisLoading || leadsLoading || qtsLoading || ordersLoading) {
+  if (orgsLoading || kpisLoading) {
     return <div className="loading-state">Loading CRM Workspace...</div>;
   }
+
+  const tabLoading =
+    (activeTab === 'leads' && leadsLoading) ||
+    (activeTab === 'quotations' && qtsLoading) ||
+    (activeTab === 'orders' && ordersLoading);
 
   return (
     <div className="workspace-container">
@@ -112,14 +122,15 @@ export const CRMModule: React.FC = () => {
       </header>
 
       <div className="kpi-grid">
-        <KPICard title="Total Accounts" value={kpis?.total_organizations || 0} />
-        <KPICard title="Contract Value" value={new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(kpis?.active_contract_value || 0)} />
-        <KPICard title="Win Rate" value={`${kpis?.win_rate || 0}%`} />
-        <KPICard title="Overdue Tasks" value={kpis?.overdue_activities || 0} />
+        <KPICard title="Total Accounts" value={kpis?.total_organizations ?? kpis?.total_accounts ?? 0} />
+        <KPICard title="Contract Value" value={new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(kpis?.active_contract_value ?? kpis?.pipeline_value ?? 0)} />
+        <KPICard title="Win Rate" value={`${kpis?.win_rate ?? 0}%`} />
+        <KPICard title="Overdue Tasks" value={kpis?.overdue_activities ?? kpis?.open_deals ?? 0} />
       </div>
 
       <div className="section-card">
         <div className="section-header" style={{ display: 'flex', gap: '20px', padding: '0 20px' }}>
+          <button onClick={() => setActiveTab('pipeline')} className={`tab-link ${activeTab === 'pipeline' ? 'active' : ''}`}>Pipeline</button>
           <button onClick={() => setActiveTab('leads')} className={`tab-link ${activeTab === 'leads' ? 'active' : ''}`}>Leads</button>
           <button onClick={() => setActiveTab('accounts')} className={`tab-link ${activeTab === 'accounts' ? 'active' : ''}`}>Accounts</button>
           <button onClick={() => setActiveTab('quotations')} className={`tab-link ${activeTab === 'quotations' ? 'active' : ''}`}>Quotations</button>
@@ -127,8 +138,21 @@ export const CRMModule: React.FC = () => {
         </div>
 
         <div className="section-body" style={{ padding: 0 }}>
-          {activeTab === 'leads' && (
+          {tabLoading && (
+            <div className="loading-state" style={{ padding: '24px' }}>Loading...</div>
+          )}
+
+          {!tabLoading && activeTab === 'pipeline' && (
+            <KanbanBoard />
+          )}
+
+          {!tabLoading && activeTab === 'leads' && (
             <>
+              {leadsResult?.missing && (
+                <div className="schema-notice">
+                  Leads table not found. Run <code>00011_phase2_transactional_sales.sql</code> in the Supabase SQL editor.
+                </div>
+              )}
               <div style={{ padding: '12px 20px', borderBottom: '1px solid var(--frappe-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontWeight: 600, fontSize: '13px' }}>Recent Leads</span>
                 <button className="btn-frappe btn-frappe-primary" onClick={() => openObjectPage('Lead', 'New')}>
@@ -140,7 +164,7 @@ export const CRMModule: React.FC = () => {
             </>
           )}
 
-          {activeTab === 'accounts' && (
+          {!tabLoading && activeTab === 'accounts' && (
             <>
               <div style={{ padding: '12px 20px', borderBottom: '1px solid var(--frappe-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontWeight: 600, fontSize: '13px' }}>Customer Master</span>
@@ -153,8 +177,13 @@ export const CRMModule: React.FC = () => {
             </>
           )}
 
-          {activeTab === 'quotations' && (
+          {!tabLoading && activeTab === 'quotations' && (
             <>
+              {quotationsResult?.missing && (
+                <div className="schema-notice">
+                  Quotations table not found. Run <code>00011_phase2_transactional_sales.sql</code> in the Supabase SQL editor.
+                </div>
+              )}
               <div style={{ padding: '12px 20px', borderBottom: '1px solid var(--frappe-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontWeight: 600, fontSize: '13px' }}>Draft Quotations</span>
                 <button className="btn-frappe btn-frappe-primary" onClick={() => openObjectPage('Quotation', 'New')}>
@@ -166,8 +195,13 @@ export const CRMModule: React.FC = () => {
             </>
           )}
 
-          {activeTab === 'orders' && (
+          {!tabLoading && activeTab === 'orders' && (
             <>
+              {ordersResult?.missing && (
+                <div className="schema-notice">
+                  Sales orders table not found. Run <code>00011_phase2_transactional_sales.sql</code> in the Supabase SQL editor.
+                </div>
+              )}
               <div style={{ padding: '12px 20px', borderBottom: '1px solid var(--frappe-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontWeight: 600, fontSize: '13px' }}>Sales Orders</span>
                 <button className="btn-frappe btn-frappe-primary" onClick={() => openObjectPage('SalesOrder', 'New')}>
@@ -200,6 +234,19 @@ export const CRMModule: React.FC = () => {
         }
         .tab-link:hover:not(.active) {
           color: var(--frappe-text);
+        }
+        .schema-notice {
+          margin: 16px 20px;
+          padding: 12px 16px;
+          background: #fff8e6;
+          border: 1px solid #f0d58c;
+          border-radius: 6px;
+          font-size: 13px;
+          color: #7a5b00;
+        }
+        .schema-notice code {
+          font-family: monospace;
+          font-size: 12px;
         }
       `}</style>
     </div>
