@@ -9,7 +9,7 @@ export const SupplyPODetail: React.FC = () => {
   const { t } = useTranslation();
   const { activeRecordId, closeObjectPage } = useGlobalStore();
   
-  const isNew = activeRecordId === 'New PO';
+  const isNew = activeRecordId === 'New';
   const { data: po, isLoading: isPOLoading } = usePurchaseOrder(!isNew ? activeRecordId : null);
   
   const submitPO = useSubmitPO();

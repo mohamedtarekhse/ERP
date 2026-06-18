@@ -10,7 +10,7 @@ export const CRMAccountDetail: React.FC = () => {
   const { t } = useTranslation();
   const { activeRecordId, closeObjectPage } = useGlobalStore();
   
-  const isNew = activeRecordId === 'New Account';
+  const isNew = activeRecordId === 'New';
   const { data: organization, isLoading: isOrgLoading } = useCRMOrganization(!isNew ? activeRecordId : null);
   const { data: employees } = useEmployees();
   const { mutate: createOrg } = useCreateOrganization();

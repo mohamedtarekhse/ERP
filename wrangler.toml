@@ -3,10 +3,7 @@ compatibility_date = "2026-06-16"
 
 [assets]
 directory = "./dist"
+not_found_handling = "single-page-application"
 
-[vars]
-# Public variables (Safe for frontend)
-VITE_SUPABASE_URL = "your-supabase-url"
-
-# Secret variables should be set via Cloudflare Dashboard or Wrangler secret:
-# VITE_SUPABASE_ANON_KEY (Public anon key)
+# VITE_* vars are embedded at build time by Vite — set them in .env or CI, not here.
+# Example: VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your build environment.

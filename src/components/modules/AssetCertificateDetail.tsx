@@ -9,7 +9,7 @@ export const AssetCertificateDetail: React.FC = () => {
   const { t } = useTranslation();
   const { activeRecordId, closeObjectPage } = useGlobalStore();
   
-  const isNew = activeRecordId === 'New Certificate';
+  const isNew = activeRecordId === 'New';
   const { data: certificate, isLoading: isCertLoading } = useCertificate(!isNew ? activeRecordId : null);
   const { data: assets } = useAssets();
   const { mutate: renewCert } = useRenewCertificate();

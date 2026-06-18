@@ -9,7 +9,7 @@ export const HREmployeeDetail: React.FC = () => {
   const { t } = useTranslation();
   const { activeRecordId, closeObjectPage } = useGlobalStore();
   
-  const isNew = activeRecordId === 'New Employee';
+  const isNew = activeRecordId === 'New';
   const { data: employee, isLoading: isEmployeeLoading } = useEmployee(!isNew ? activeRecordId : null);
   const { data: departments } = useDepartments();
   const { data: designations } = useDesignations();

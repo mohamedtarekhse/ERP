@@ -8,7 +8,7 @@ import { supabase } from '../../db/supabaseClient';
 export const PurchaseReceiptDetail: React.FC = () => {
   const { activeRecordId, closeObjectPage } = useGlobalStore();
   
-  const isNew = activeRecordId === 'New Receipt';
+  const isNew = activeRecordId === 'New';
   const submitReceipt = useSubmitReceipt();
   const { data: pos } = usePurchaseOrders();
 

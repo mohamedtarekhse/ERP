@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { supabase } from '../db/supabaseClient';
 import type { Session, User } from '@supabase/supabase-js';
 
@@ -17,6 +17,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [role, setRole] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const fetchUserRole = useCallback(async (userId: string) => {
+    const { data, error } = await supabase
+      .from('user_roles')
+      .select('roles(name)')
+      .eq('user_id', userId)
+      .single();
+
+    if (data && !error) {
+      const roles = data.roles as { name: string } | { name: string }[] | null;
+      const roleName = Array.isArray(roles) ? roles[0]?.name : roles?.name;
+      if (roleName) setRole(roleName);
+    }
+  }, []);
 
   useEffect(() => {
     // Get initial session
@@ -37,19 +51,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     return () => subscription.unsubscribe();
-  }, []);
-
-  const fetchUserRole = async (userId: string) => {
-    const { data, error } = await supabase
-      .from('user_roles')
-      .select('roles(name)')
-      .eq('user_id', userId)
-      .single();
-
-    if (data && !error) {
-      setRole((data.roles as any).name);
-    }
-  };
+  }, [fetchUserRole]);
 
   const signOut = async () => {
     await supabase.auth.signOut();

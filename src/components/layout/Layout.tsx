@@ -80,6 +80,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       case 'Certificate': return <AssetCertificateDetail />;
       case 'PO': return <SupplyPODetail />;
       case 'PurchaseReceipt': return <PurchaseReceiptDetail />;
+      case 'MaterialRequest': return <div className="p-4">Material Request Detail (To be implemented)</div>;
       default: return null;
     }
   };
