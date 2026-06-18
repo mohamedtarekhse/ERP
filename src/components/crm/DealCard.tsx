@@ -1,5 +1,5 @@
 import React from 'react';
-import { CRMDeal } from '../../hooks/useCRM';
+import type { CRMDeal } from '../../hooks/useCRM';
 
 export const DealCard: React.FC<{ deal: CRMDeal; isDragging: boolean }> = ({ deal, isDragging }) => {
   const formattedAmount = new Intl.NumberFormat('en-US', {

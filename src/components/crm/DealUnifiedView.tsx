@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useCRMActivities, useAddCRMActivity, CRMDeal } from '../../hooks/useCRM';
+import { useCRMActivities, useAddCRMActivity } from '../../hooks/useCRM';
+import type { CRMDeal } from '../../hooks/useCRM';
 import { FileText, Mail, Phone, CheckSquare } from 'lucide-react';
 
 export const DealUnifiedView: React.FC<{ deal: CRMDeal }> = ({ deal }) => {

@@ -321,7 +321,7 @@ export const useAddCRMActivity = () => {
       if (error) throw error;
       return data;
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['crm_activities'] });
     },
   });

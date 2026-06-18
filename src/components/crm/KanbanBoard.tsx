@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
-import { useCRMPipelineStages, useCRMDeals, useUpdateDealStage, CRMDeal } from '../../hooks/useCRM';
+import { useCRMPipelineStages, useCRMDeals, useUpdateDealStage } from '../../hooks/useCRM';
+import type { CRMDeal } from '../../hooks/useCRM';
 import { DealCard } from './DealCard';
 import { useGlobalStore } from '../../store/globalStore';
 
@@ -65,7 +66,7 @@ export const KanbanBoard: React.FC = () => {
             </div>
             
             <Droppable droppableId={stage.id}>
-              {(provided, snapshot) => (
+              {(provided: any, snapshot: any) => (
                 <div
                   ref={provided.innerRef}
                   {...provided.droppableProps}
@@ -79,7 +80,7 @@ export const KanbanBoard: React.FC = () => {
                 >
                   {columns[stage.id]?.map((deal, index) => (
                     <Draggable key={deal.id} draggableId={deal.id} index={index}>
-                      {(provided, snapshot) => (
+                      {(provided: any, snapshot: any) => (
                         <div
                           ref={provided.innerRef}
                           {...provided.draggableProps}

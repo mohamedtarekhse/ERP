@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useCRMOrganizations, useCRMKPIs, useCRMLeads, useCRMQuotations, useCRMSalesOrders } from '../../hooks/useCRM';
 import { DataTable } from '../DataTable';
 import { useGlobalStore } from '../../store/globalStore';
-import { UserPlus, Target, FileText, ShoppingCart, LayoutDashboard } from 'lucide-react';
+import { UserPlus, Target, FileText, ShoppingCart } from 'lucide-react';
 import { KanbanBoard } from '../crm/KanbanBoard';
 
 const KPICard = ({ title, value }: { title: string, value: string | number }) => (
